@@ -1,9 +1,17 @@
 package com.assqr.twtr.utils;
 
 import com.assqr.twtr.constants.LiteralValueConstants;
+import com.assqr.twtr.enums.DayOfWeek;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.StringUtils;
 
+import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
+import java.sql.Timestamp;
+import java.text.*;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
@@ -110,7 +118,7 @@ public class DateUtil {
     public static final Long currentTimeMillis() {
         String testTimeMillis = System.getProperty(SYS_PROP_KEY_TEST_TIME_MILLIS);
 
-        if (StringUtils.isNotEmpty(testTimeMillis)) {
+        if (!StringUtils.hasLength(testTimeMillis)) {
             return Long.valueOf(testTimeMillis);
         }
 
@@ -136,7 +144,7 @@ public class DateUtil {
             return null;
         }
 
-        return new Timestamp(data.getTime());
+        return new Timestamp(date.getTime());
     }
 
     /**
@@ -157,11 +165,11 @@ public class DateUtil {
             return null;
         }
 
-        if (StringUtils.isEmpty(pattern)) {
-            throw new IllegalArgumentException("pattern = " + pattern)
+        if (!StringUtils.hasLength(pattern)) {
+            throw new IllegalArgumentException("pattern = " + pattern);
         }
 
-        DateFormat fmt = new SimpleDataFormat(pattern);
+        DateFormat fmt = new SimpleDateFormat(pattern);
 
         if (tz != null) {
             fmt.setTimeZone(tz);
@@ -184,9 +192,9 @@ public class DateUtil {
             return null;
         }
 
-        if (StringUtils.isEmpty(date)
-                || StringUtils.isEmpty(befFmt)
-                || StringUtils.isEmpty(aftFmt)) {
+        if (!StringUtils.hasLength(date)
+                || !StringUtils.hasLength(befFmt)
+                || !StringUtils.hasLength(aftFmt)) {
             throw new IllegalArgumentException("date=" + date + ", befFmt = " + befFmt + ", aftFmt = " + aftFmt);
         }
 
@@ -194,7 +202,7 @@ public class DateUtil {
             throw new IllegalArgumentException("date = " + date + ", befFmt = " + befFmt);
         }
 
-        Date dateval = parseDate(date, befFmt, tz);
+        Date dateVal = parseDate(date, befFmt, tz);
 
         return formatDate(dateVal, aftFmt, tz);
     }
@@ -278,9 +286,9 @@ public class DateUtil {
      * @throws ParseException 日付変換に失敗
      */
     public static Date parseDate(String date, String pattern, TimeZone tz) {
-        if (StringUtils.isEmpty(date)
-            || StringUtils.isEmpty(pattern)) {
-            throw new IllegalArgumentException("date = " + date + ", pattern = " + pattern)
+        if (!StringUtils.hasLength(date)
+            || !StringUtils.hasLength(pattern)) {
+            throw new IllegalArgumentException("date = " + date + ", pattern = " + pattern);
         }
 
         DateFormat fmt = new SimpleDateFormat(pattern);
